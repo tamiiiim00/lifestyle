@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>جدول الوجبات الأسبوعي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Tajawal',Tahoma,Arial,sans-serif;background:#F0F4F8;color:#1E293B;direction:rtl;min-height:100vh}
+.sticky-top{position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(0,0,0,.14)}
+.hdr{background:linear-gradient(135deg,#059669 0%,#0891B2 100%);color:#fff;padding:14px 16px}
+.hdr h1{font-size:18px;font-weight:700;margin-bottom:2px}
+.hdr p{font-size:12px;opacity:.82}
+.tabs-wrap{background:#fff;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-bottom:1.5px solid #E2E8F0}
+.tabs-wrap::-webkit-scrollbar{display:none}
+.tabs{display:flex;min-width:max-content;padding:0 8px}
+.tab{padding:10px 13px;font-size:13px;font-weight:500;font-family:inherit;color:#64748B;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1.5px;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab.on{color:#059669;border-bottom-color:#059669;font-weight:700}
+.macro-bar{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-bottom:1px solid #E2E8F0;padding:10px 6px 8px}
+.mb-i{text-align:center}
+.mb-v{font-size:15px;font-weight:700}
+.mb-u{font-size:10px;color:#64748B}
+.mb-l{font-size:10px;color:#94A3B8;margin-top:1px}
+.page{padding:12px;max-width:600px;margin:0 auto;padding-bottom:32px}
+.day-hdr{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:13px;padding:12px 14px;margin-bottom:12px;border:1px solid #E2E8F0}
+.day-name{font-size:16px;font-weight:700}
+.typ-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.tb-tr{background:#DCFCE7;color:#166534}
+.tb-ca{background:#DBEAFE;color:#1E40AF}
+.tb-re{background:#F1F5F9;color:#475569}
+.card{background:#fff;border-radius:14px;border:1px solid #E2E8F0;margin-bottom:10px;overflow:hidden}
+.card-top{display:flex;align-items:center;gap:10px;padding:12px 14px;padding-right:18px;border-right:4px solid currentColor}
+.c-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.c-meta{flex:1;min-width:0}
+.c-type{font-size:11px;font-weight:700;margin-bottom:1px;opacity:.8}
+.c-title{font-size:14px;font-weight:700;color:#1E293B}
+.c-cal{flex-shrink:0;text-align:center;background:#F8FAFC;border-radius:8px;padding:5px 9px;border:1px solid #F1F5F9}
+.cal-n{font-size:15px;font-weight:700;color:#1E293B;display:block;line-height:1.2}
+.cal-l{font-size:10px;color:#94A3B8}
+.cf{color:#F59E0B}.cg{color:#10B981}.cp{color:#6366F1}.cb{color:#3B82F6}
+.bf{background:#FFFBEB}.bg{background:#F0FDF4}.bpv{background:#EEF2FF}.bb{background:#EFF6FF}
+.card-body{padding:12px 14px}
+.note{background:#FFF7ED;border:1px solid #FDE68A;border-radius:8px;padding:9px 11px;font-size:12px;color:#7C2D12;margin-bottom:10px;line-height:1.6}
+.note strong{display:block;font-size:13px;color:#92400E;margin-bottom:3px}
+.note ol{padding-right:16px;margin-top:4px}
+.items{list-style:none;margin-bottom:12px}
+.items li{font-size:13px;color:#475569;padding:3px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.dot{width:5px;height:5px;border-radius:50%;background:#CBD5E1;margin-top:7px;flex-shrink:0}
+.mxs{display:flex;gap:6px}
+.mx{flex:1;background:#F8FAFC;border:1px solid #F1F5F9;border-radius:8px;padding:6px;text-align:center}
+.mx-v{font-size:13px;font-weight:700;color:#1E293B}
+.mx-l{font-size:10px;color:#94A3B8}
+.tog-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:12px;font-family:inherit;font-weight:700;margin-top:10px;transition:background .12s;text-align:right}
+.prot-btn{background:#EFF6FF;border:1.5px dashed #93C5FD;color:#1D4ED8}
+.prot-btn:hover,.prot-btn.on{background:#DBEAFE}
+.tog-box{display:none;margin-top:8px;border-radius:10px;padding:11px 12px}
+.tog-box.show{display:block}
+.prot-box{background:#F0F9FF;border:1px solid #BAE6FD}
+.tog-box ul{list-style:none;margin-bottom:10px}
+.prot-box ul li{font-size:13px;color:#075985;padding:2px 0;display:flex;gap:8px}
+.prot-box ul li::before{content:'+';font-weight:700;color:#0EA5E9;flex-shrink:0}
+.prot-mxs{display:flex;gap:6px}
+.pmx{flex:1;background:#E0F2FE;border-radius:8px;padding:5px;text-align:center}
+.pmx-v{font-size:12px;font-weight:700;color:#0C4A6E}
+.pmx-l{font-size:10px;color:#0369A1}
+.day-total{background:#fff;border-radius:14px;border:1px solid #E2E8F0;padding:14px;margin-bottom:10px}
+.day-total h3{font-size:13px;font-weight:700;color:#64748B;margin-bottom:10px}
+.tot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tot-box{background:#F8FAFC;border-radius:10px;padding:10px;text-align:center}
+.tot-v{font-size:18px;font-weight:700;color:#1E293B}
+.tot-l{font-size:11px;color:#94A3B8;margin-top:2px}
+.notes-card{background:#fff;border-radius:14px;border:1px solid #E2E8F0;padding:14px;margin-top:4px}
+.notes-card h3{font-size:14px;font-weight:700;margin-bottom:10px}
+.note-row{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:13px;color:#475569;line-height:1.5}
+.n-ico{width:18px;height:18px;border-radius:50%;background:#DCFCE7;display:flex;align-items:center;justify-content:center;color:#166534;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.notes-link{background:#F0FDF4;border:1px solid #86EFAC;border-radius:10px;padding:10px 14px;font-family:inherit;font-size:13px;color:#166534;cursor:pointer;width:100%;margin-top:6px;display:block;text-align:center}
+.supps{background:#fff;border-radius:14px;border:1px solid #E2E8F0;padding:14px;margin-top:10px}
+.supps h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.sgrp{margin-bottom:14px}
+.sgrp:last-child{margin-bottom:0}
+.spri{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px}
+.scard{border-radius:10px;padding:10px 12px;margin-bottom:7px;border-right:3px solid currentColor}
+.scard:last-child{margin-bottom:0}
+.sname{font-size:13px;font-weight:700}
+.sdose{font-size:12px;color:#475569;margin-top:2px}
+.swhy{font-size:12px;color:#64748B;margin-top:4px;line-height:1.5}
+.sfoot{font-size:11px;color:#94A3B8;margin-top:10px;padding-top:10px;border-top:1px solid #F1F5F9}
+
+.card-f{--mc:#F59E0B;--mb:#FFFBEB;--mt:#92400E}
+.card-g{--mc:#10B981;--mb:#F0FDF4;--mt:#065F46}
+.card-a{--mc:#6366F1;--mb:#EEF2FF;--mt:#4338CA}
+.card-s{--mc:#3B82F6;--mb:#EFF6FF;--mt:#1D4ED8}
+.swap-wrap{margin-top:10px}
+.swap-lbl{font-size:11px;font-weight:700;color:#94A3B8;margin-bottom:6px}
+.pills-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.pills-row::-webkit-scrollbar{display:none}
+.pill{padding:5px 11px;border-radius:16px;font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;white-space:nowrap;border:1.5px solid #E2E8F0;background:#fff;color:#64748B;flex-shrink:0;transition:all .12s}
+.pill.active{border-color:var(--mc,#059669);background:var(--mb,#F0FDF4);color:var(--mt,#065F46);font-weight:700}
+.trow{margin-bottom:9px}
+.trh{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.tlbl{font-size:12px;color:#64748B}
+.tval{font-size:13px;font-weight:700;color:#1E293B}
+.pb{background:#F1F5F9;border-radius:4px;height:5px}
+.pbf{height:100%;border-radius:4px;transition:width .3s ease}
+.pbc{background:#059669}.pbp{background:#3B82F6}.pbk{background:#F59E0B}.pbd{background:#EF4444}.pbw{background:#DC2626}
+.trem{font-size:11px;color:#94A3B8;margin-top:10px;padding-top:8px;border-top:1px solid #F1F5F9;line-height:1.7}
+.cust-btn{display:flex;align-items:center;gap:6px;width:100%;padding:8px 12px;background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:10px;cursor:pointer;font-size:12px;font-family:inherit;color:#64748B;margin-top:10px;text-align:right}
+.cust-btn:hover{background:#F1F5F9}
+.cust-panel{display:none;margin-top:8px;background:#FAFAFA;border:1px solid #E2E8F0;border-radius:10px;padding:12px}
+.cust-panel.show{display:block}
+.cust-tin{width:100%;padding:8px 10px;border:1px solid #E2E8F0;border-radius:8px;font-family:inherit;font-size:13px;direction:rtl;margin-bottom:8px;background:#fff}
+.cust-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.cust-iw{display:flex;flex-direction:column;gap:3px}
+.cust-num{padding:8px;border:1px solid #E2E8F0;border-radius:8px;font-family:inherit;font-size:15px;text-align:center;width:100%;background:#fff}
+.cust-il{font-size:10px;color:#94A3B8;text-align:center}
+.cust-btns{display:flex;gap:8px;flex-direction:row-reverse}
+.cust-save{padding:8px 18px;background:#059669;color:#fff;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.cust-canc{padding:8px 14px;background:#F1F5F9;color:#64748B;border:none;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer}
+.cbadge{display:flex;align-items:center;justify-content:space-between;background:#DCFCE7;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;color:#166534;font-weight:500}
+.cbadge-x{padding:2px 8px;background:none;border:1px solid #22C55E;border-radius:5px;cursor:pointer;font-size:11px;color:#166534;font-family:inherit}
+
+</style>
+</head>
+<body>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Tajawal',Tahoma,Arial,sans-serif;background:#F0F4F8;color:#1E293B;direction:rtl;min-height:100vh}
+.sticky-top{position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(0,0,0,.14)}
+.hdr{background:linear-gradient(135deg,#059669 0%,#0891B2 100%);color:#fff;padding:14px 16px}
+.hdr h1{font-size:18px;font-weight:700;margin-bottom:2px}
+.hdr p{font-size:12px;opacity:.82}
+.tabs-wrap{background:#fff;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-bottom:1.5px solid #E2E8F0}
+.tabs-wrap::-webkit-scrollbar{display:none}
+.tabs{display:flex;min-width:max-content;padding:0 8px}
+.tab{padding:10px 13px;font-size:13px;font-weight:500;font-family:inherit;color:#64748B;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1.5px;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab.on{color:#059669;border-bottom-color:#059669;font-weight:700}
+.macro-bar{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-bottom:1px solid #E2E8F0;padding:10px 6px 8px}
+.mb-i{text-align:center}
+.mb-v{font-size:15px;font-weight:700}
+.mb-u{font-size:10px;color:#64748B}
+.mb-l{font-size:10px;color:#94A3B8;margin-top:1px}
+.page{padding:12px;max-width:600px;margin:0 auto;padding-bottom:32px}
+.day-hdr{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:13px;padding:12px 14px;margin-bottom:12px;border:1px solid #E2E8F0}
+.day-name{font-size:16px;font-weight:700}
+.typ-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.tb-tr{background:#DCFCE7;color:#166534}
+.tb-ca{background:#DBEAFE;color:#1E40AF}
+.tb-re{background:#F1F5F9;color:#475569}
+.card{background:#fff;border-radius:14px;border:1px solid #E2E8F0;margin-bottom:10px;overflow:hidden}
+.card-top{display:flex;align-items:center;gap:10px;padding:12px 14px;padding-right:18px;border-right:4px solid currentColor}
+.c-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.c-meta{flex:1;min-width:0}
+.c-type{font-size:11px;font-weight:700;margin-bottom:1px;opacity:.8}
+.c-title{font-size:14px;font-weight:700;color:#1E293B}
+.c-cal{flex-shrink:0;text-align:center;background:#F8FAFC;border-radius:8px;padding:5px 9px;border:1px solid #F1F5F9}
+.cal-n{font-size:15px;font-weight:700;color:#1E293B;display:block;line-height:1.2}
+.cal-l{font-size:10px;color:#94A3B8}
+.cf{color:#F59E0B}.cg{color:#10B981}.cp{color:#6366F1}.cb{color:#3B82F6}
+.bf{background:#FFFBEB}.bg{background:#F0FDF4}.bpv{background:#EEF2FF}.bb{background:#EFF6FF}
+.card-body{padding:12px 14px}
+.note{background:#FFF7ED;border:1px solid #FDE68A;border-radius:8px;padding:9px 11px;font-size:12px;color:#7C2D12;margin-bottom:10px;line-height:1.6}
+.note strong{display:block;font-size:13px;color:#92400E;margin-bottom:3px}
+.note ol{padding-right:16px;margin-top:4px}
+.items{list-style:none;margin-bottom:12px}
+.items li{font-size:13px;color:#475569;padding:3px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.dot{width:5px;height:5px;border-radius:50%;background:#CBD5E1;margin-top:7px;flex-shrink:0}
+.mxs{display:flex;gap:6px}
+.mx{flex:1;background:#F8FAFC;border:1px solid #F1F5F9;border-radius:8px;padding:6px;text-align:center}
+.mx-v{font-size:13px;font-weight:700;color:#1E293B}
+.mx-l{font-size:10px;color:#94A3B8}
+.tog-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:12px;font-family:inherit;font-weight:700;margin-top:10px;transition:background .12s;text-align:right}
+.prot-btn{background:#EFF6FF;border:1.5px dashed #93C5FD;color:#1D4ED8}
+.prot-btn:hover,.prot-btn.on{background:#DBEAFE}
+.tog-box{display:none;margin-top:8px;border-radius:10px;padding:11px 12px}
+.tog-box.show{display:block}
+.prot-box{background:#F0F9FF;border:1px solid #BAE6FD}
+.tog-box ul{list-style:none;margin-bottom:10px}
+.prot-box ul li{font-size:13px;color:#075985;padding:2px 0;display:flex;gap:8px}
+.prot-box ul li::before{content:'+';font-weight:700;color:#0EA5E9;flex-shrink:0}
+.prot-mxs{display:flex;gap:6px}
+.pmx{flex:1;background:#E0F2FE;border-radius:8px;padding:5px;text-align:center}
+.pmx-v{font-size:12px;font-weight:700;color:#0C4A6E}
+.pmx-l{font-size:10px;color:#0369A1}
+.day-total{background:#fff;border-radius:14px;border:1px solid #E2E8F0;padding:14px;margin-bottom:10px}
+.day-total h3{font-size:13px;font-weight:700;color:#64748B;margin-bottom:10px}
+.tot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tot-box{background:#F8FAFC;border-radius:10px;padding:10px;text-align:center}
+.tot-v{font-size:18px;font-weight:700;color:#1E293B}
+.tot-l{font-size:11px;color:#94A3B8;margin-top:2px}
+.notes-card{background:#fff;border-radius:14px;border:1px solid #E2E8F0;padding:14px;margin-top:4px}
+.notes-card h3{font-size:14px;font-weight:700;margin-bottom:10px}
+.note-row{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:13px;color:#475569;line-height:1.5}
+.n-ico{width:18px;height:18px;border-radius:50%;background:#DCFCE7;display:flex;align-items:center;justify-content:center;color:#166534;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.notes-link{background:#F0FDF4;border:1px solid #86EFAC;border-radius:10px;padding:10px 14px;font-family:inherit;font-size:13px;color:#166534;cursor:pointer;width:100%;margin-top:6px;display:block;text-align:center}
+.supps{background:#fff;border-radius:14px;border:1px solid #E2E8F0;padding:14px;margin-top:10px}
+.supps h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.sgrp{margin-bottom:14px}
+.sgrp:last-child{margin-bottom:0}
+.spri{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px}
+.scard{border-radius:10px;padding:10px 12px;margin-bottom:7px;border-right:3px solid currentColor}
+.scard:last-child{margin-bottom:0}
+.sname{font-size:13px;font-weight:700}
+.sdose{font-size:12px;color:#475569;margin-top:2px}
+.swhy{font-size:12px;color:#64748B;margin-top:4px;line-height:1.5}
+.sfoot{font-size:11px;color:#94A3B8;margin-top:10px;padding-top:10px;border-top:1px solid #F1F5F9}
+
+.card-f{--mc:#F59E0B;--mb:#FFFBEB;--mt:#92400E}
+.card-g{--mc:#10B981;--mb:#F0FDF4;--mt:#065F46}
+.card-a{--mc:#6366F1;--mb:#EEF2FF;--mt:#4338CA}
+.card-s{--mc:#3B82F6;--mb:#EFF6FF;--mt:#1D4ED8}
+.swap-wrap{margin-top:10px}
+.swap-lbl{font-size:11px;font-weight:700;color:#94A3B8;margin-bottom:6px}
+.pills-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.pills-row::-webkit-scrollbar{display:none}
+.pill{padding:5px 11px;border-radius:16px;font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;white-space:nowrap;border:1.5px solid #E2E8F0;background:#fff;color:#64748B;flex-shrink:0;transition:all .12s}
+.pill.active{border-color:var(--mc,#059669);background:var(--mb,#F0FDF4);color:var(--mt,#065F46);font-weight:700}
+.trow{margin-bottom:9px}
+.trh{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.tlbl{font-size:12px;color:#64748B}
+.tval{font-size:13px;font-weight:700;color:#1E293B}
+.pb{background:#F1F5F9;border-radius:4px;height:5px}
+.pbf{height:100%;border-radius:4px;transition:width .3s ease}
+.pbc{background:#059669}.pbp{background:#3B82F6}.pbk{background:#F59E0B}.pbd{background:#EF4444}.pbw{background:#DC2626}
+.trem{font-size:11px;color:#94A3B8;margin-top:10px;padding-top:8px;border-top:1px solid #F1F5F9;line-height:1.7}
+.cust-btn{display:flex;align-items:center;gap:6px;width:100%;padding:8px 12px;background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:10px;cursor:pointer;font-size:12px;font-family:inherit;color:#64748B;margin-top:10px;text-align:right}
+.cust-btn:hover{background:#F1F5F9}
+.cust-panel{display:none;margin-top:8px;background:#FAFAFA;border:1px solid #E2E8F0;border-radius:10px;padding:12px}
+.cust-panel.show{display:block}
+.cust-tin{width:100%;padding:8px 10px;border:1px solid #E2E8F0;border-radius:8px;font-family:inherit;font-size:13px;direction:rtl;margin-bottom:8px;background:#fff}
+.cust-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.cust-iw{display:flex;flex-direction:column;gap:3px}
+.cust-num{padding:8px;border:1px solid #E2E8F0;border-radius:8px;font-family:inherit;font-size:15px;text-align:center;width:100%;background:#fff}
+.cust-il{font-size:10px;color:#94A3B8;text-align:center}
+.cust-btns{display:flex;gap:8px;flex-direction:row-reverse}
+.cust-save{padding:8px 18px;background:#059669;color:#fff;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.cust-canc{padding:8px 14px;background:#F1F5F9;color:#64748B;border:none;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer}
+.cbadge{display:flex;align-items:center;justify-content:space-between;background:#DCFCE7;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;color:#166534;font-weight:500}
+.cbadge-x{padding:2px 8px;background:none;border:1px solid #22C55E;border-radius:5px;cursor:pointer;font-size:11px;color:#166534;font-family:inherit}
+
+</style>
+<div class="sticky-top"><div class="hdr"><h1>خطة التغذية &#8212; عضل ونشاف</h1><p>نزول ~1 كيلو/أسبوع · Full Body 3 أيام · تبديلات متكافئة</p></div><div class="tabs-wrap"><div class="tabs" id="tabs"></div></div></div><div class="page" id="page"></div><script>
+var D=[{"day": "الأحد", "type": "تدريب كامل A", "tb": "tb-tr", "meals": [{"mt": "f", "lb": "فطور", "ic": "&#129373;", "tt": "بيض مسخن مع شوفان وزبادي", "cal": 448, "p": 43, "c": 28, "f": 17, "ps": {"cal": 216, "def": "eggs", "opts": ["eggs", "chicken"]}, "cs": {"cal": 120, "def": "oats", "opts": ["oats", "bread"]}, "ex": ["زبادي يوناني 200جم", "قرفة"], "note": "<strong>&#129373; البيض المسخن = Scrambled Eggs</strong>البيض المسخن مو مسلوق &#8212; هو بيض مخفوق يُطبخ في المقلاة. الطريقة:<ol><li>اكسر البيض وحرّكه بالشوكة</li><li>مقلاة على نار متوسطة مع سبراي طبخ أو رذاذ زيت بسيط</li><li>صب البيض وحركه باستمرار حتى يتجمع ويصير ناعم</li><li>ارفعه قبل ما يجف &#8212; المفروض يطلع طري</li></ol>"}, {"mt": "g", "lb": "غداء", "ic": "&#127831;", "tt": "صدر دجاج مع أرز وخضار", "cal": 632, "p": 68, "c": 52, "f": 15, "ps": {"cal": 320, "def": "chicken", "opts": ["chicken", "beef", "ground", "kofta"]}, "cs": {"cal": 200, "def": "rice", "opts": ["rice", "basmati", "sweetpotato", "pasta", "bread"]}, "ex": ["خضار مجمدة مسلوقة", "نصف ملعقة زيت زيتون + ليمون"]}, {"mt": "a", "lb": "عشاء", "ic": "&#129385;", "tt": "لحم بقر مع بطاطا حلوة", "cal": 553, "p": 56, "c": 48, "f": 16, "ps": {"cal": 290, "def": "beef", "opts": ["beef", "chicken", "ground", "kofta"]}, "cs": {"cal": 150, "def": "sweetpotato", "opts": ["sweetpotato", "rice", "basmati"]}, "ex": ["سلطة طازجة", "3 ملاعق حمص", "أعشاب وليمون"]}, {"mt": "s", "lb": "سناك", "ic": "&#9889;", "tt": "زبادي يوناني مع لوز وموز", "cal": 250, "p": 24, "c": 25, "f": 7, "it": ["زبادي يوناني 200جم", "12 حبة لوز", "نصف موزة"], "hasProt": true}]}, {"day": "الاثنين", "type": "كارديو خفيف / مشي", "tb": "tb-ca", "meals": [{"mt": "f", "lb": "فطور", "ic": "&#129373;", "tt": "بيض مسخن مع خبز وزبادي", "cal": 405, "p": 41, "c": 21, "f": 16, "ps": {"cal": 216, "def": "eggs", "opts": ["eggs", "chicken"]}, "cs": {"cal": 100, "def": "bread", "opts": ["oats", "bread"]}, "ex": ["زبادي يوناني 200جم", "شاي أو قهوة سادة"], "note": "<strong>&#129373; البيض المسخن = Scrambled Eggs</strong>بيض مخفوق يُطبخ في المقلاة مع تحريك مستمر &#8212; مو مسلوق. الشرح الكامل في فطور يوم الأحد."}, {"mt": "g", "lb": "غداء", "ic": "&#127831;", "tt": "صدر دجاج مع أرز بسمتي وخضار", "cal": 622, "p": 69, "c": 48, "f": 16, "ps": {"cal": 320, "def": "chicken", "opts": ["chicken", "beef", "ground", "kofta"]}, "cs": {"cal": 190, "def": "basmati", "opts": ["rice", "basmati", "sweetpotato", "pasta", "bread"]}, "ex": ["خضار مجمدة مسلوقة", "نصف ملعقة زيت زيتون + بهارات"]}, {"mt": "a", "lb": "عشاء", "ic": "&#129401;", "tt": "كفتة لحم مع أرز", "cal": 462, "p": 37, "c": 38, "f": 17, "ps": {"cal": 300, "def": "kofta", "opts": ["kofta", "beef", "ground", "chicken"]}, "cs": {"cal": 130, "def": "rice", "opts": ["sweetpotato", "rice", "basmati"]}, "ex": ["سلطة كبيرة", "خضار مشوية", "ليمون"]}, {"mt": "s", "lb": "سناك", "ic": "&#9889;", "tt": "زبادي يوناني مع لوز وتفاح", "cal": 290, "p": 24, "c": 36, "f": 7, "it": ["زبادي يوناني 200جم", "تفاحة", "12 حبة لوز"], "hasProt": true}]}, {"day": "الثلاثاء", "type": "تدريب كامل B", "tb": "tb-tr", "meals": [{"mt": "f", "lb": "فطور", "ic": "&#129379;", "tt": "شوفان مع بيض وزبادي", "cal": 406, "p": 39, "c": 33, "f": 13, "ps": {"cal": 144, "def": "eggs", "opts": ["eggs", "chicken"]}, "cs": {"cal": 150, "def": "oats", "opts": ["oats", "bread"]}, "ex": ["زبادي يوناني 200جم", "قرفة"], "note": "<strong>&#129373; البيض المسخن = Scrambled Eggs</strong>بيض مخفوق يُطبخ في المقلاة مع تحريك مستمر &#8212; مو مسلوق. الشرح الكامل في فطور يوم الأحد."}, {"mt": "g", "lb": "غداء", "ic": "&#127831;", "tt": "شاورما دجاج مع أرز", "cal": 612, "p": 67, "c": 49, "f": 14, "ps": {"cal": 320, "def": "chicken", "opts": ["chicken", "beef", "ground", "kofta"]}, "cs": {"cal": 200, "def": "rice", "opts": ["rice", "basmati", "sweetpotato", "pasta", "bread"]}, "ex": ["خيار وطماطم وبصل", "نصف ملعقة زيت زيتون"]}, {"mt": "a", "lb": "عشاء", "ic": "&#129345;", "tt": "دجاج مشوي مع أرز وحمص", "cal": 573, "p": 69, "c": 45, "f": 12, "ps": {"cal": 310, "def": "chicken", "opts": ["chicken", "beef", "ground", "kofta"]}, "cs": {"cal": 150, "def": "rice", "opts": ["sweetpotato", "rice", "basmati"]}, "ex": ["سلطة كبيرة", "3 ملاعق حمص", "ليمون وثوم"]}, {"mt": "s", "lb": "سناك", "ic": "&#9889;", "tt": "زبادي يوناني مع لوز", "cal": 216, "p": 24, "c": 12, "f": 9, "it": ["زبادي يوناني 200جم", "15 حبة لوز"], "hasProt": true}]}, {"day": "الأربعاء", "type": "يوم راحة", "tb": "tb-re", "meals": [{"mt": "f", "lb": "فطور", "ic": "&#129373;", "tt": "بيض مسخن مع شوفان وزبادي", "cal": 418, "p": 42, "c": 23, "f": 17, "ps": {"cal": 216, "def": "eggs", "opts": ["eggs", "chicken"]}, "cs": {"cal": 90, "def": "oats", "opts": ["oats", "bread"]}, "ex": ["زبادي يوناني 200جم", "قرفة"], "note": "<strong>&#129373; البيض المسخن = Scrambled Eggs</strong>بيض مخفوق يُطبخ في المقلاة مع تحريك مستمر &#8212; مو مسلوق. الشرح الكامل في فطور يوم الأحد."}, {"mt": "g", "lb": "غداء", "ic": "&#127837;", "tt": "لحم مفروم مع باستا", "cal": 582, "p": 60, "c": 39, "f": 20, "ps": {"cal": 320, "def": "ground", "opts": ["ground", "beef", "chicken", "kofta"]}, "cs": {"cal": 170, "def": "pasta", "opts": ["rice", "basmati", "sweetpotato", "pasta", "bread"]}, "ex": ["صلصة طماطم طبيعية", "نصف ملعقة زيت زيتون"]}, {"mt": "a", "lb": "عشاء", "ic": "&#127831;", "tt": "دجاج مشوي مع حمص وسلطة", "cal": 553, "p": 70, "c": 41, "f": 12, "ps": {"cal": 320, "def": "chicken", "opts": ["chicken", "beef", "ground", "kofta"]}, "cs": {"cal": 120, "def": "sweetpotato", "opts": ["sweetpotato", "rice", "basmati"]}, "ex": ["سلطة خضار كبيرة", "3 ملاعق حمص", "أعشاب"]}, {"mt": "s", "lb": "سناك", "ic": "&#9889;", "tt": "زبادي يوناني مع لوز", "cal": 216, "p": 24, "c": 12, "f": 9, "it": ["زبادي يوناني 200جم", "15 حبة لوز"], "hasProt": true}]}, {"day": "الخميس", "type": "تدريب كامل C", "tb": "tb-tr", "meals": [{"mt": "f", "lb": "فطور", "ic": "&#129373;", "tt": "بيض مسخن مع خبز وزبادي", "cal": 482, "p": 44, "c": 34, "f": 17, "ps": {"cal": 216, "def": "eggs", "opts": ["eggs", "chicken"]}, "cs": {"cal": 120, "def": "bread", "opts": ["oats", "bread"]}, "ex": ["زبادي يوناني 200جم", "شاي أخضر"], "note": "<strong>&#129373; البيض المسخن = Scrambled Eggs</strong>بيض مخفوق يُطبخ في المقلاة مع تحريك مستمر &#8212; مو مسلوق. الشرح الكامل في فطور يوم الأحد."}, {"mt": "g", "lb": "غداء", "ic": "&#127831;", "tt": "صدر دجاج مع أرز بسمتي وخضار", "cal": 642, "p": 70, "c": 52, "f": 16, "ps": {"cal": 320, "def": "chicken", "opts": ["chicken", "beef", "ground", "kofta"]}, "cs": {"cal": 210, "def": "basmati", "opts": ["rice", "basmati", "sweetpotato", "pasta", "bread"]}, "ex": ["خضار مجمدة مسلوقة", "نصف ملعقة زيت زيتون + ثوم"]}, {"mt": "a", "lb": "عشاء", "ic": "&#129385;", "tt": "شريحة لحم مع بطاطا حلوة", "cal": 553, "p": 56, "c": 48, "f": 16, "ps": {"cal": 290, "def": "beef", "opts": ["beef", "chicken", "ground", "kofta"]}, "cs": {"cal": 150, "def": "sweetpotato", "opts": ["sweetpotato", "rice", "basmati"]}, "ex": ["سلطة", "3 ملاعق حمص", "خضار مشوية"]}, {"mt": "s", "lb": "سناك", "ic": "&#9889;", "tt": "بروتين شيك مع موز", "cal": 235, "p": 30, "c": 22, "f": 4, "it": ["1 سكوب آيزوليت بروتين باودر", "200مل حليب نصف دسم", "نصف موزة", "يفضل بعد التمرين"]}]}, {"day": "الجمعة", "type": "كارديو &#8212; 45&#8211;60 دقيقة", "tb": "tb-ca", "meals": [{"mt": "f", "lb": "فطور", "ic": "&#129379;", "tt": "شوفان مع بيض وزبادي", "cal": 378, "p": 34, "c": 31, "f": 13, "ps": {"cal": 144, "def": "eggs", "opts": ["eggs", "chicken"]}, "cs": {"cal": 150, "def": "oats", "opts": ["oats", "bread"]}, "ex": ["زبادي يوناني 150جم", "قرفة"], "note": "<strong>&#129373; البيض المسخن = Scrambled Eggs</strong>بيض مخفوق يُطبخ في المقلاة مع تحريك مستمر &#8212; مو مسلوق. الشرح الكامل في فطور يوم الأحد."}, {"mt": "g", "lb": "غداء", "ic": "&#127831;", "tt": "دجاج مشوي مع أرز وسلطة", "cal": 592, "p": 67, "c": 45, "f": 14, "ps": {"cal": 320, "def": "chicken", "opts": ["chicken", "beef", "ground", "kofta"]}, "cs": {"cal": 180, "def": "rice", "opts": ["rice", "basmati", "sweetpotato", "pasta", "bread"]}, "ex": ["سلطة كبيرة", "نصف ملعقة زيت زيتون"]}, {"mt": "a", "lb": "عشاء", "ic": "&#129920;", "tt": "كبدة مشوية مع أرز", "cal": 502, "p": 56, "c": 51, "f": 10, "ps": {"cal": 300, "def": "liver", "opts": ["liver", "chicken", "beef"]}, "cs": {"cal": 150, "def": "rice", "opts": ["sweetpotato", "rice", "basmati"]}, "ex": ["خضار مجمدة مسلوقة", "ليمون وبصل"]}, {"mt": "s", "lb": "سناك", "ic": "&#9889;", "tt": "زبادي يوناني مع لوز", "cal": 216, "p": 24, "c": 12, "f": 9, "it": ["زبادي يوناني 200جم", "15 حبة لوز"], "hasProt": true}]}, {"day": "السبت", "type": "يوم راحة", "tb": "tb-re", "meals": [{"mt": "f", "lb": "فطور", "ic": "&#129379;", "tt": "شوفان مع زبادي ولوز", "cal": 466, "p": 41, "c": 34, "f": 19, "ps": {"cal": 144, "def": "eggs", "opts": ["eggs", "chicken"]}, "cs": {"cal": 140, "def": "oats", "opts": ["oats", "bread"]}, "ex": ["زبادي يوناني 200جم", "قرفة"], "note": "<strong>&#129373; البيض المسخن = Scrambled Eggs</strong>بيض مخفوق يُطبخ في المقلاة مع تحريك مستمر &#8212; مو مسلوق. الشرح الكامل في فطور يوم الأحد."}, {"mt": "g", "lb": "غداء", "ic": "&#127828;", "tt": "برجر لحم بقر صحي", "cal": 506, "p": 60, "c": 32, "f": 14, "ps": {"cal": 320, "def": "ground", "opts": ["ground", "beef", "chicken", "kofta"]}, "cs": {"cal": 150, "def": "bread", "opts": ["rice", "basmati", "sweetpotato", "pasta", "bread"]}, "ex": ["خس وطماطم وبصل", "مستردة بدون مايو"]}, {"mt": "a", "lb": "عشاء", "ic": "&#127831;", "tt": "دجاج بالثوم مع بطاطا حلوة", "cal": 553, "p": 70, "c": 41, "f": 12, "ps": {"cal": 320, "def": "chicken", "opts": ["chicken", "beef", "ground", "kofta"]}, "cs": {"cal": 120, "def": "sweetpotato", "opts": ["sweetpotato", "rice", "basmati"]}, "ex": ["3 ملاعق حمص", "سلطة كبيرة", "روزماري وليمون"]}, {"mt": "s", "lb": "سناك", "ic": "&#9889;", "tt": "زبادي يوناني مع لوز وعسل", "cal": 218, "p": 23, "c": 17, "f": 7, "it": ["زبادي يوناني 200جم", "12 حبة لوز", "نصف ملعقة عسل"], "hasProt": true}]}],PF={"chicken": {"n": "صدر دجاج", "dc": 120, "p": 23, "f": 2.6, "c": 0, "raw": 1}, "beef": {"n": "لحم بقر قليل الدهن", "dc": 130, "p": 21, "f": 5, "c": 0, "raw": 1}, "ground": {"n": "لحم مفروم 95/5", "dc": 130, "p": 21, "f": 5, "c": 0, "raw": 1}, "kofta": {"n": "كفتة لحم", "dc": 165, "p": 18, "f": 9, "c": 2, "raw": 1}, "liver": {"n": "كبدة", "dc": 120, "p": 20, "f": 3.5, "c": 4, "raw": 1}, "eggs": {"n": "بيض", "egg": 72, "p": 6, "f": 5, "c": 0}},CF={"rice": {"n": "أرز أبيض", "dc": 130, "c": 28, "p": 2.7, "f": 0.3, "ck": 1}, "basmati": {"n": "أرز بسمتي", "dc": 121, "c": 25, "p": 3, "f": 0.4, "ck": 1}, "sweetpotato": {"n": "بطاطا حلوة", "dc": 90, "c": 21, "p": 2, "f": 0.1, "ck": 1}, "bread": {"n": "خبز أسمر", "slice": 77, "c": 13, "p": 3, "f": 1}, "oats": {"n": "شوفان", "dc": 389, "c": 66, "p": 17, "f": 7, "dry": 1}, "pasta": {"n": "باستا", "dc": 158, "c": 31, "p": 5.8, "f": 0.9, "ck": 1}},ISOL={"n": "آيزوليت بروتين", "q": "سكوب (27جم)", "p": 25, "c": 1, "f": 0, "cal": 106},T={"cal": 2000, "p": 215, "c": 165, "f": 62},NOTES=["<strong>الجدول الأسبوعي:</strong> تمرين كامل (Full Body) أيام <strong>الأحد · الثلاثاء · الخميس</strong> &#8212; كارديو خفيف/مشي الاثنين، كارديو الجمعة، راحة تامة الأربعاء والسبت", "<strong>ليه هالترتيب؟</strong> التمارين مباعدة بيوم بينها (48 ساعة) عشان العضلة تستشفي كامل قبل التمرين الجاي &#8212; أفضل للنمو وتفادي الإصابات", "الأساس <strong>~1800 سعرة</strong> مصمم لنزول <strong>~1 كيلو بالأسبوع</strong>. الكارديو (الاثنين والجمعة) يساعدك توصل العجز المطلوب بشكل صحي", "<strong>وزن نفسك مرة بالأسبوع</strong> بنفس الظروف (الصبح، على الريق). إذا النزول أقل من كيلو بعد أسبوعين، انقص 100&#8211;150 سعرة", "الكارب أعلى في أيام التمرين (طاقة واستشفاء) وأقل في أيام الراحة &#8212; توزيع يخدم النشاف", "تبديل مصدر البروتين أو الكارب يحافظ على <strong>نفس السعرات والماكروز</strong> &#8212; الكميات معايرة لتكون متكافئة", "كل أوزان اللحم والدجاج والكبدة <strong>وزن نيء قبل الطبخ</strong>؛ الأرز والباستا والبطاطا <strong>وزن مطبوخ</strong>؛ الشوفان وزن جاف", "الشريط يقيس أكلك مقابل <strong>الحد الأعلى الصحي</strong> (2000 سعرة) &#8212; فيه مساحة للسكوب الإضافي أو أي تعديل", "البروتين هو الماكرو الوحيد اللي لو زاد شوي يفيدك (يحافظ على العضل وأنت تخسر دهون)", "الوجبة بعد التمرين: بروتين + كارب بأقرب فرصة. اشرب 3&#8211;4 لتر ماء يومياً خصوصاً بعد إيقاف المنجارو"],SUPPS=[{"pri": "أساسي", "pc": "#166534", "pb": "#DCFCE7", "cc": "#14532D", "cb": "#F0FDF4", "items": [{"n": "كرياتين مونوهيدريت", "d": "5جم يومياً &#8212; أي وقت مع الأكل أو البروتين", "w": "الأكثر دراسة علمياً. يزيد القوة ويساعد بناء العضل مباشرة."}, {"n": "أوميقا 3 (EPA+DHA)", "d": "2-3جم يومياً &#8212; مع الغداء أو العشاء", "w": "ضروري عندك لأن الدهون الحشوية مستوى 27 (مرتفع جداً). يخفف الالتهاب ويحمي القلب."}, {"n": "فيتامين D3", "d": "3000-5000 وحدة يومياً &#8212; مع الفطور", "w": "أغلب السعوديين ناقصين رغم الشمس. يأثر على العضل والطاقة والمناعة والتستوستيرون."}]}, {"pri": "مهم", "pc": "#1D4ED8", "pb": "#DBEAFE", "cc": "#1E3A8A", "cb": "#EFF6FF", "items": [{"n": "مغنيسيوم جليسينيت", "d": "300-400مج &#8212; قبل النوم بساعة", "w": "يحسن النوم والاستشفاء. اختر جليسينيت تحديداً &#8212; أخف على المعدة."}, {"n": "زنك", "d": "15-25مج &#8212; مع العشاء", "w": "مهم للتستوستيرون والمناعة. قد تنقص مع الحمية."}]}, {"pri": "اختياري", "pc": "#B45309", "pb": "#FEF3C7", "cc": "#92400E", "cb": "#FFFBEB", "items": [{"n": "فيتامين ب كومبلكس", "d": "كبسولة يومياً &#8212; مع الفطور", "w": "يدعم الطاقة والأعصاب. مفيد بعد المنجارو لتأثيره على B12."}, {"n": "كولاجين + فيتامين C", "d": "10-15جم كولاجين &#8212; صباحاً مع عصير ليمون", "w": "يدعم المفاصل والجلد مع فقدان الوزن. فيتامين C ضروري لبناء الكولاجين."}]}];
+var MT={f:{l:'الفطور',c:'card-f',b:'bf'},g:{l:'الغداء',c:'card-g',b:'bg'},a:{l:'العشاء',c:'card-a',b:'bpv'},s:{l:'سناك',c:'card-s',b:'bb'}};
+var cur=0,S={};
+function gs(di,mi){var k=di+'_'+mi;if(!S[k])S[k]={};return S[k];}
+function r5(x){return Math.round(x/5)*5;}
+function eggWord(n){return n==1?'بيضة':(n==2?'بيضتان':'بيضات');}
+function sliceWord(n){return n==1?'شريحة':(n==2?'شريحتان':'شرائح');}
+function pLine(slot,sel){var F=PF[sel],C=slot.cal;
+  if(F.egg){var n=Math.round(C/F.egg);return n+' '+eggWord(n)+' مسخنة (scrambled)';}
+  var g=r5(C/F.dc*100);return g+'جم '+F.n+(F.raw?' (وزن نيء)':'');}
+function cLine(slot,sel){var F=CF[sel],C=slot.cal;
+  if(F.slice){var n=Math.round(C/F.slice);return n+' '+sliceWord(n)+' '+F.n;}
+  var g=r5(C/F.dc*100);return g+'جم '+F.n+(F.dry?' (وزن جاف)':' مطبوخ');}
+function getMM(di,mi){var m=D[di].meals[mi],s=gs(di,mi);
+  if(s.cust)return{cal:s.cust.cal,p:s.cust.p,c:s.cust.c,f:s.cust.f,cu:1};
+  var mm={cal:m.cal,p:m.p,c:m.c,f:m.f};
+  if(m.hasProt&&s.pwd){mm.cal+=ISOL.cal;mm.p+=ISOL.p;mm.c+=ISOL.c;}
+  return mm;}
+function dayTot(di){var t={cal:0,p:0,c:0,f:0};for(var i=0;i<D[di].meals.length;i++){var mm=getMM(di,i);t.cal+=mm.cal;t.p+=mm.p;t.c+=mm.c;t.f+=mm.f;}return t;}
+
+function esc(s){return s;}
+function pills(di,mi,which,slot){
+  var s=gs(di,mi),sel=(which=='p'?s.pSel:s.cSel)||slot.def,FT=(which=='p'?PF:CF);
+  var lbl=which=='p'?'بدّل مصدر البروتين':'بدّل مصدر الكارب';
+  var h='<div class="swap-wrap"><div class="swap-lbl">'+lbl+'</div><div class="pills-row">';
+  for(var i=0;i<slot.opts.length;i++){var o=slot.opts[i],a=o==sel?' active':'';
+    h+='<button class="pill'+a+'" onclick="setSel('+di+','+mi+',\''+which+'\',\''+o+'\')">'+FT[o].n+'</button>';}
+  return h+'</div></div>';
+}
+function mealCard(di,mi){
+  var m=D[di].meals[mi],s=gs(di,mi),M=MT[m.mt],mm=getMM(di,mi);
+  var h='<div class="card '+M.c+'">';
+  h+='<div class="card-top"><div class="c-icon '+M.b+'">'+m.ic+'</div>';
+  h+='<div class="c-meta"><div class="c-type">'+M.l+'</div><div class="c-title">'+m.tt+'</div></div>';
+  h+='<div class="c-cal"><span class="cal-n">'+mm.cal+'</span><span class="cal-l">سعرة</span></div></div>';
+  h+='<div class="card-body">';
+  if(m.note)h+='<div class="note">'+m.note+'</div>';
+  if(s.cust){
+    h+='<div class="items"><li style="list-style:none"><span class="dot"></span>'+s.cust.name+'</li></div>';
+    h+='<div class="cbadge"><span>&#9998; وجبة معدّلة: '+mm.cal+' سعرة · '+mm.p+'ج بروتين</span><button class="cbadge-x" onclick="clrCust('+di+','+mi+')">إلغاء</button></div>';
+    h+='</div></div>';return h;
+  }
+  // items: dynamic protein line + carb line + fixed extras
+  h+='<ul class="items">';
+  if(m.ps)h+='<li><span class="dot"></span>'+pLine(m.ps,s.pSel||m.ps.def)+'</li>';
+  if(m.cs)h+='<li><span class="dot"></span>'+cLine(m.cs,s.cSel||m.cs.def)+'</li>';
+  var ex=m.ex||m.it||[];for(var i=0;i<ex.length;i++)h+='<li><span class="dot"></span>'+ex[i]+'</li>';
+  h+='</ul>';
+  h+='<div class="mxs"><div class="mx"><div class="mx-v cp">'+mm.p+'ج</div><div class="mx-l">بروتين</div></div>';
+  h+='<div class="mx"><div class="mx-v cg">'+mm.c+'ج</div><div class="mx-l">كارب</div></div>';
+  h+='<div class="mx"><div class="mx-v cf">'+mm.f+'ج</div><div class="mx-l">دهون</div></div></div>';
+  if(m.ps&&m.ps.opts.length>1)h+=pills(di,mi,'p',m.ps);
+  if(m.cs&&m.cs.opts.length>1)h+=pills(di,mi,'c',m.cs);
+  if(m.hasProt){
+    var on=s.pwd?' on':'';
+    h+='<button class="tog-btn prot-btn'+on+'" onclick="togPwd('+di+','+mi+')">&#128170; '+(s.pwd?'&#10003; ':'')+'نفس الوجبة + سكوب آيزوليت (25ج بروتين · 106 سعرة)</button>';
+  }
+  h+='<button class="cust-btn" onclick="tglCust('+di+','+mi+')">&#9998; أكلت شي ثاني؟ عدّل الوجبة</button>';
+  h+='<div class="cust-panel" id="cp'+di+'_'+mi+'">';
+  h+='<input class="cust-tin" id="cn'+di+'_'+mi+'" placeholder="اسم الأكل (مثلاً: شاورما)">';
+  h+='<div class="cust-grid">';
+  h+='<div class="cust-iw"><input class="cust-num" id="cc'+di+'_'+mi+'" type="number" inputmode="numeric" placeholder="0"><span class="cust-il">سعرة</span></div>';
+  h+='<div class="cust-iw"><input class="cust-num" id="cpp'+di+'_'+mi+'" type="number" inputmode="numeric" placeholder="0"><span class="cust-il">بروتين</span></div>';
+  h+='<div class="cust-iw"><input class="cust-num" id="ckk'+di+'_'+mi+'" type="number" inputmode="numeric" placeholder="0"><span class="cust-il">كارب</span></div>';
+  h+='<div class="cust-iw"><input class="cust-num" id="cff'+di+'_'+mi+'" type="number" inputmode="numeric" placeholder="0"><span class="cust-il">دهون</span></div></div>';
+  h+='<div class="cust-btns"><button class="cust-save" onclick="saveCust('+di+','+mi+')">حفظ</button><button class="cust-canc" onclick="tglCust('+di+','+mi+')">إلغاء</button></div>';
+  h+='</div>';
+  h+='</div></div>';return h;
+}
+function bar(lbl,v,max,cls){
+  var pct=Math.min(100,Math.round(v/max*100)),over=v>max;
+  var fc=over?'pbw':cls;
+  var h='<div class="trow"><div class="trh"><span class="tlbl">'+lbl+'</span><span class="tval">'+v+' / '+max+'</span></div>';
+  h+='<div class="pb"><div class="pbf '+fc+'" style="width:'+pct+'%"></div></div>';
+  if(over)h+='<div style="font-size:11px;color:#DC2626;font-weight:700;margin-top:3px">تجاوزت الحد بـ'+(v-max)+'</div>';
+  return h+'</div>';
+}
+function dayTotal(di){
+  var t=dayTot(di);
+  var h='<div class="day-total"><h3>&#128202; إجمالي اليوم — مقابل الحد الأعلى الصحي</h3>';
+  h+=bar('السعرات',t.cal,T.cal,'pbc');
+  h+=bar('البروتين',t.p,T.p,'pbp');
+  h+=bar('الكارب',t.c,T.c,'pbk');
+  h+=bar('الدهون',t.f,T.f,'pbd');
+  h+='<div class="trem">الأساس ثابت ~2000 سعرة. تبديل مصادر البروتين والكارب ما يغيّر الأرقام (كميات متكافئة). يتغيّر المجموع فقط لو أضفت سكوب آيزوليت أو عدّلت وجبة.</div></div>';
+  return h;
+}
+function suppsHtml(){
+  var h='<div class="supps"><h3>&#128138; المكملات الموصى بها</h3>';
+  for(var g=0;g<SUPPS.length;g++){var G=SUPPS[g];
+    h+='<div class="sgrp"><span class="spri" style="background:'+G.pb+';color:'+G.pc+'">'+G.pri+'</span>';
+    for(var i=0;i<G.items.length;i++){var it=G.items[i];
+      h+='<div class="scard" style="background:'+G.cb+';color:'+G.pc+'"><div class="sname" style="color:'+G.cc+'">'+it.n+'</div><div class="sdose">'+it.d+'</div><div class="swhy">'+it.w+'</div></div>';}
+    h+='</div>';}
+  h+='<div class="sfoot">ابدأ بالأساسي شهر، بعدها أضف الباقي. استشر طبيبك خصوصاً مع إيقاف المنجارو.</div></div>';
+  return h;
+}
+function notesHtml(){
+  var h='<div class="notes-card" id="notesCard"><h3>&#128221; ملاحظات مهمة</h3>';
+  for(var i=0;i<NOTES.length;i++)h+='<div class="note-row"><span class="n-ico">&#10003;</span><span>'+NOTES[i]+'</span></div>';
+  return h+'</div>';
+}
+function renderTabs(){var h='';for(var i=0;i<D.length;i++){h+='<button class="tab'+(i==cur?' on':'')+'" onclick="go('+i+')">'+D[i].day+'</button>';}document.getElementById('tabs').innerHTML=h;}
+function render(){
+  var di=cur,day=D[di];
+  var h='<div class="day-hdr"><span class="day-name">'+day.day+'</span><span class="typ-badge '+day.tb+'">'+day.type+'</span></div>';
+  for(var i=0;i<day.meals.length;i++)h+=mealCard(di,i);
+  h+=dayTotal(di);
+  h+=suppsHtml();
+  h+=notesHtml();
+  document.getElementById('page').innerHTML=h;
+  window.scrollTo(0,0);
+}
+function go(i){cur=i;renderTabs();render();}
+function setSel(di,mi,w,o){var s=gs(di,mi);if(w=='p')s.pSel=o;else s.cSel=o;render();}
+function togPwd(di,mi){var s=gs(di,mi);s.pwd=!s.pwd;render();}
+function tglCust(di,mi){var el=document.getElementById('cp'+di+'_'+mi);if(el)el.classList.toggle('show');}
+function saveCust(di,mi){
+  var g=function(p){var v=parseInt((document.getElementById(p+di+'_'+mi)||{}).value,10);return isNaN(v)?0:v;};
+  var nm=(document.getElementById('cn'+di+'_'+mi)||{}).value||'وجبة معدّلة';
+  var s=gs(di,mi);s.cust={name:nm,cal:g('cc'),p:g('cpp'),c:g('ckk'),f:g('cff')};render();
+}
+function clrCust(di,mi){var s=gs(di,mi);s.cust=null;render();}
+renderTabs();render();
+</script>
+</body>
+</html>
